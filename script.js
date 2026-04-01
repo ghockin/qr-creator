@@ -1,9 +1,10 @@
 const urlInput = document.getElementById("urlInput");
 const generateBtn = document.getElementById("generateBtn");
-const qrImage = document.getElementById("qrImage");
+const qrContainer = document.getElementById("qrContainer");
 const downloadBtn = document.getElementById("downloadBtn");
 
-// Validate URL
+let qr; // QRCode object
+
 function isValidUrl(string) {
   try {
     new URL(string);
@@ -15,29 +16,46 @@ function isValidUrl(string) {
 
 generateBtn.addEventListener("click", () => {
   const url = urlInput.value.trim();
-  
+
   if (!url) {
     alert("Please enter a URL.");
     return;
   }
 
   if (!isValidUrl(url)) {
-    alert("Please enter a valid URL starting with https:// or http://");
+    alert("Please enter a valid URL starting with http:// or https://");
     return;
   }
 
-  // Add timestamp to avoid caching
-  const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(url)}&choe=UTF-8&t=${new Date().getTime()}`;
-  
-  qrImage.src = qrUrl;
-  qrImage.style.display = "block";
+  // Clear previous QR
+  qrContainer.innerHTML = "";
+
+  // Generate new QR code
+  qr = new QRCode(qrContainer, {
+    text: url,
+    width: 200,
+    height: 200,
+    colorDark : "#000000",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.H
+  });
+
   downloadBtn.style.display = "inline-block";
 });
 
-// Download QR Code
+// Download QR code as PNG
 downloadBtn.addEventListener("click", () => {
-  const link = document.createElement("a");
-  link.href = qrImage.src;
+  const img = qrContainer.querySelector("img") || qrContainer.querySelector("canvas");
+  if (!img) return;
+
+  let link = document.createElement("a");
+  
+  if (img.tagName === "IMG") {
+    link.href = img.src;
+  } else {
+    link.href = img.toDataURL("image/png");
+  }
+
   link.download = "qr-code.png";
   link.click();
 });
