@@ -43,7 +43,6 @@ generateBtn.addEventListener("click", () => {
   downloadBtn.style.display = "inline-block";
 });
 
-// Download QR code as PNG
 downloadBtn.addEventListener("click", () => {
   const img = qrContainer.querySelector("img") || qrContainer.querySelector("canvas");
   if (!img) return;
