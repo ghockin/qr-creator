@@ -54,4 +54,6 @@ button:hover {
   width: 200px;
   height: 200px;
   display: none;
+  border: 5px solid #ff6f00;
+  border-radius: 10px;
 }
